@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sports Facilities Cliente</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="shell" id="home-page">
+      <header class="hero">
+        <p class="eyebrow">Proyecto Cliente</p>
+        <h1>Sports Facilities Explorer</h1>
+        <p class="lead">
+          Cliente web independiente para consultar instalaciones deportivas, deportes
+          del sistema e histórico meteorológico.
+        </p>
+      </header>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="/">Inicio</a>
+        <a href="/installations">Instalaciones</a>
+        <a href="/sports">Deportes</a>
+        <a href="/weather-records">Histórico meteorológico</a>
+      </nav>
+
+      <main class="content-stack">
+        <section class="panel">
+          <h2>Estado de la API</h2>
+          <p id="api-status-text" class="status-text">Comprobando conexión con el backend...</p>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/js/home.js"></script>
+  </body>
+</html>

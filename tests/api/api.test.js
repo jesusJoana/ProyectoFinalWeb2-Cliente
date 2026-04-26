@@ -5,7 +5,7 @@ import {
   fetchInstallationById,
   fetchInstallations,
   fetchInstallationWeather
-} from '../../src/api/api.js';
+} from '../../public/js/api.js';
 
 test('fetchApiStatus devuelve el mensaje del backend cuando la API responde correctamente', async () => {
   const fetchImpl = async (url, options) => ({

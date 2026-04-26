@@ -1,61 +1,37 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { JSDOM } from 'jsdom';
-import { mountApp } from '../../src/main.js';
+import { mountHomePage } from '../../public/js/home.js';
 
 test('La pantalla de inicio renderiza la navegación principal y muestra el estado correcto de la API', async () => {
-  const dom = new JSDOM('<div id="app"></div>');
-  const root = dom.window.document.querySelector('#app');
-  const fetchImpl = async (url) => {
-    if (url.endsWith('/installations?page=1&limit=10')) {
-      return {
-        ok: true,
-        json: async () => ({
-          data: [
-            {
-              id: 'inst-1',
-              name: 'Polideportivo Norte',
-              type: 'sports_centre',
-              city: 'Getafe'
-            }
-          ],
-          pagination: { page: 1, limit: 10 }
-        })
-      };
-    }
-
-    return {
+  const dom = new JSDOM(`
+    <main id="home-page">
+      <p id="api-status-text" class="status-text">Comprobando conexión con el backend...</p>
+    </main>
+  `);
+  const root = dom.window.document.querySelector('#home-page');
+  const fetchImpl = async () => ({
       ok: true,
       json: async () => ({ message: 'Sports Facilities API is running' })
-    };
-  };
+    });
 
-  await mountApp(root, { fetchImpl });
+  await mountHomePage(root, { fetchImpl });
 
-  // Comprobamos que la estructura principal ya deja preparado el crecimiento del cliente.
-  assert.ok(root.querySelector('.main-nav'));
-  assert.match(root.textContent, /Instalaciones/);
-  assert.match(root.textContent, /Deportes/);
-  assert.match(root.textContent, /Histórico meteorológico/);
-  assert.match(root.textContent, /Polideportivo Norte/);
   assert.match(root.querySelector('#api-status-text').textContent, /API disponible/);
 });
 
 test('La pantalla de inicio muestra un mensaje de error si falla la comprobación inicial', async () => {
-  const dom = new JSDOM('<div id="app"></div>');
-  const root = dom.window.document.querySelector('#app');
-  const fetchImpl = async (url) => {
-    if (url.endsWith('/installations?page=1&limit=10')) {
-      return {
-        ok: true,
-        json: async () => ({ data: [], pagination: { page: 1, limit: 10 } })
-      };
-    }
-
+  const dom = new JSDOM(`
+    <main id="home-page">
+      <p id="api-status-text" class="status-text">Comprobando conexión con el backend...</p>
+    </main>
+  `);
+  const root = dom.window.document.querySelector('#home-page');
+  const fetchImpl = async () => {
     throw new Error('No se pudo comprobar el estado de la API.');
   };
 
-  await mountApp(root, { fetchImpl });
+  await mountHomePage(root, { fetchImpl });
 
   const statusNode = root.querySelector('#api-status-text');
   assert.match(statusNode.textContent, /No se pudo comprobar el estado de la API\./);
@@ -63,8 +39,9 @@ test('La pantalla de inicio muestra un mensaje de error si falla la comprobació
 });
 
 test('La pantalla de instalaciones permite filtrar y abrir el detalle', async () => {
-  const dom = new JSDOM('<div id="app"></div>', { url: 'http://localhost/cliente' });
-  const root = dom.window.document.querySelector('#app');
+  const { mountInstallationsPage } = await import('../../public/js/installations.js');
+  const dom = new JSDOM('<main id="installations-page"></main>', { url: 'http://localhost/installations' });
+  const root = dom.window.document.querySelector('#installations-page');
   const requestedUrls = [];
   const fetchImpl = async (url) => {
     requestedUrls.push(url);
@@ -127,7 +104,7 @@ test('La pantalla de instalaciones permite filtrar y abrir el detalle', async ()
     };
   };
 
-  await mountApp(root, { fetchImpl });
+  await mountInstallationsPage(root, { fetchImpl });
 
   root.querySelector('input[name="city"]').value = 'Getafe';
   root.querySelector('input[name="sport"]').value = 'football';

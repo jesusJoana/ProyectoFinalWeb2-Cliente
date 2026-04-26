@@ -5,7 +5,7 @@ import {
   renderInstallationsList,
   renderInstallationsSection,
   renderInstallationWeather
-} from '../../src/views/installations.js';
+} from '../../public/js/installations.js';
 
 test('renderInstallationsSection incluye filtros, resultados y controles de paginación', () => {
   const html = renderInstallationsSection();

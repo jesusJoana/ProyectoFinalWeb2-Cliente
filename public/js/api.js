@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config.js';
+import { API_BASE_URL } from './config.js';
 
 function joinUrl(baseUrl, path) {
   return `${baseUrl.replace(/\/+$/, '')}${path}`;
@@ -128,4 +128,75 @@ export async function fetchInstallationWeather(id, fetchImpl = globalThis.fetch,
   }
 
   return payload.data;
+}
+
+export async function fetchSports(options = {}, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  const { missingMetadata, page = 1, limit = 10 } = options;
+  const queryString = buildQueryString({ missingMetadata, page, limit });
+  const response = await fetchImpl(joinUrl(baseUrl, `/sports${queryString}`), {
+    headers: {
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudieron cargar los deportes.');
+    throw new Error(message);
+  }
+
+  const payload = await response.json();
+
+  if (!Array.isArray(payload?.data)) {
+    throw new Error('La API devolvió una lista de deportes inesperada.');
+  }
+
+  return {
+    data: payload.data,
+    pagination: payload.pagination ?? { page, limit }
+  };
+}
+
+export async function fetchWeatherRecords(options = {}, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  const {
+    installationId,
+    condition,
+    dateFrom,
+    dateTo,
+    sortBy,
+    sortOrder,
+    page = 1,
+    limit = 10
+  } = options;
+  const queryString = buildQueryString({
+    installationId,
+    condition,
+    dateFrom,
+    dateTo,
+    sortBy,
+    sortOrder,
+    page,
+    limit
+  });
+  const response = await fetchImpl(joinUrl(baseUrl, `/weather-records${queryString}`), {
+    headers: {
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo cargar el histórico meteorológico.');
+    throw new Error(message);
+  }
+
+  const payload = await response.json();
+
+  if (!Array.isArray(payload?.data)) {
+    throw new Error('La API devolvió una lista meteorológica inesperada.');
+  }
+
+  return {
+    data: payload.data,
+    pagination: payload.pagination ?? { page, limit },
+    sorting: payload.sorting
+  };
 }

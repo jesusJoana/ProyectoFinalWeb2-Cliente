@@ -4,11 +4,11 @@ Cliente independiente para consumir `sports-facilities-api`.
 
 ## Estructura
 
-El cliente está construido con:
+El cliente está organizado como servidor web clásico:
 
-- `index.html`
-- `src/styles.css`
-- `src/main.js`
+- `views/` para páginas HTML
+- `public/css/styles.css` para estilos
+- `public/js/` para scripts de navegador
 - módulos JS pequeños para la lógica de acceso a la API y el renderizado
 
 ## Uso
@@ -18,8 +18,8 @@ npm install
 npm run test
 ```
 
-Después, el cliente puede abrirse directamente en el navegador cargando `index.html`.
+Después, el cliente se servirá desde el servidor local del proyecto.
 
 ## Configuración
 
-La URL base de la API se ajusta en `src/config.js`.
+La URL base de la API se ajusta en `public/js/config.js`.
