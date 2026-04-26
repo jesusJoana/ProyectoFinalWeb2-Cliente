@@ -16,10 +16,28 @@ El cliente está organizado como servidor web clásico:
 ```bash
 npm install
 npm run test
+npm run dev
 ```
 
-Después, el cliente se servirá desde el servidor local del proyecto.
+URL local:
+
+```text
+http://localhost:5173
+```
+
+Rutas principales:
+
+- `/`
+- `/installations`
+- `/sports`
+- `/weather-records`
 
 ## Configuración
 
 La URL base de la API se ajusta en `public/js/config.js`.
+
+Por defecto, el cliente consume la API en:
+
+```text
+http://localhost:3000
+```
