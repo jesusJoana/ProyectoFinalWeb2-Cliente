@@ -8,7 +8,7 @@ El cliente se desarrolla en el repositorio `ProyectoFinalWeb2-Cliente`, separado
 
 ## Estado actual tras la reorganizacion
 
-Ya se ha completado la extraccion arquitectonica del cliente:
+Ya se ha completado la extraccion arquitectonica del cliente y las iteraciones funcionales principales:
 
 - el cliente vive en su propio repositorio;
 - el backend ya no contiene `cliente-web`;
@@ -18,6 +18,10 @@ Ya se ha completado la extraccion arquitectonica del cliente:
 - la URL base de la API esta centralizada en `public/js/config.js`;
 - el cliente arranca en `http://localhost:5173`;
 - la API arranca en `http://localhost:3000`.
+- las secciones de instalaciones, deportes y historico meteorologico estan operativas;
+- instalaciones permite alta, edicion, borrado y asociacion de deportes existentes del catalogo;
+- deportes funciona como catalogo global, no como formulario de deportes practicados por una instalacion;
+- el historico meteorologico permite filtros, ordenacion y paginacion.
 
 ## Criterios de division
 
@@ -85,7 +89,7 @@ Crear la base del cliente y verificar que puede comunicarse correctamente con la
 
 ### Estado
 
-Completada funcionalmente.
+Completada.
 
 ### Tests
 
@@ -118,7 +122,7 @@ Implementar el recurso principal del dominio en modo consulta: instalaciones dep
 
 ### Estado
 
-Completada funcionalmente.
+Completada.
 
 ### Tests
 
@@ -151,7 +155,7 @@ Anadir al cliente la capacidad de consultar la meteorologia de una instalacion c
 
 ### Estado
 
-Completada funcionalmente.
+Completada.
 
 ### Tests
 
@@ -186,16 +190,15 @@ Implementar la consulta del historico meteorologico como una seccion propia del 
 
 ### Estado
 
-Pendiente de ampliar. Actualmente existe pagina y script base para cargar el listado inicial.
+Completada.
 
-### Tests a implementar
+### Tests implementados
 
 - tests del servicio de `weather-records`;
 - test del listado del historico;
 - tests de filtros;
 - tests de ordenacion;
 - tests de paginacion;
-- test del detalle de weather-record si se implementa;
 - tests de carga vacia y error de consulta.
 
 ---
@@ -225,9 +228,9 @@ No tiene como objetivo asociar deportes a instalaciones concretas. Esa relacion 
 
 ### Estado
 
-Implementada funcionalmente. Queda pendiente revisar textos visibles para dejar claro que el formulario gestiona el catalogo global de deportes.
+Completada funcionalmente. Los textos visibles ya indican que el formulario gestiona el catalogo global de deportes.
 
-### Tests a implementar
+### Tests implementados
 
 - tests del servicio de deportes;
 - tests del listado y filtro `missingMetadata=true`;
@@ -261,9 +264,9 @@ Completar la parte de instalaciones anadiendo operaciones de creacion, edicion y
 
 ### Estado
 
-Pendiente.
+Completada funcionalmente. La asociacion de deportes se realiza solo desde el catalogo `sports`; no se anaden deportes libres por nombre.
 
-### Tests a implementar
+### Tests implementados
 
 - tests del formulario de alta;
 - tests del formulario de edicion;
@@ -305,6 +308,60 @@ Pendiente.
 
 ---
 
+## Iteracion 8. Busqueda avanzada de instalaciones
+
+### Objetivo
+
+Incorporar en el cliente el parametro `q` de busqueda libre cuando la API lo tenga cerrado.
+
+### Alcance
+
+- anadir campo `q` en filtros de instalaciones;
+- consumir `GET /installations?q=...`;
+- combinar `q` con filtros actuales:
+  - `name`
+  - `city`
+  - `type`
+  - `sport`
+  - `page`
+  - `limit`
+- mostrar mensajes de error si la API rechaza una busqueda vacia o invalida;
+- mantener compatibilidad con el comportamiento actual.
+
+### Estado
+
+Pendiente, dependiente de cierre en API.
+
+### Tests a implementar
+
+- test del servicio con parametro `q`;
+- test de la vista enviando `q`;
+- test de combinacion `q + city`;
+- test de error cuando la API rechaza la busqueda.
+
+---
+
+## Iteracion 9. Revision final de entrega
+
+### Objetivo
+
+Preparar el cliente para entrega y demostracion junto con la API.
+
+### Alcance
+
+- revisar README y documentos;
+- ejecutar suite completa de tests;
+- comprobar cliente y API levantados simultaneamente;
+- revisar textos visibles;
+- revisar que no haya dependencias innecesarias;
+- preparar propuesta de commits para que el usuario los revise y ejecute.
+
+### Estado
+
+Pendiente.
+
+---
+
 ## Orden recomendado de ejecucion
 
 1. Iteracion 0: extraccion y arquitectura base
@@ -315,6 +372,8 @@ Pendiente.
 6. Iteracion 5: consulta y gestion de deportes
 7. Iteracion 6: gestion basica de instalaciones y deportes practicados
 8. Iteracion 7: mejora de experiencia de usuario y cierre
+9. Iteracion 8: busqueda avanzada de instalaciones
+10. Iteracion 9: revision final de entrega
 
 ## Criterio de cierre por iteracion
 

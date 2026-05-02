@@ -4,8 +4,10 @@ import {
   renderInstallationDetail,
   renderInstallationsList,
   renderInstallationsSection,
-  renderInstallationWeather
+  renderInstallationWeather,
+  mountInstallationsPage
 } from '../../public/js/installations.js';
+import { JSDOM } from 'jsdom';
 
 test('renderInstallationsSection incluye filtros, resultados y controles de paginación', () => {
   const html = renderInstallationsSection();
@@ -82,4 +84,118 @@ test('renderInstallationWeather muestra temperatura, condición, humedad, viento
   assert.match(html, /73 %/);
   assert.match(html, /4,2 m\/s/);
   assert.match(html, /Meteorología actual/);
+});
+
+test('La pantalla de instalaciones permite crear, editar, asociar deportes y borrar', async () => {
+  const dom = new JSDOM('<main id="installations-page"></main>', { url: 'http://localhost/installations' });
+  const root = dom.window.document.querySelector('#installations-page');
+  const requested = [];
+  const installation = {
+    id: '507f1f77bcf86cd799439011',
+    name: 'Polideportivo Norte',
+    type: 'sports_centre',
+    city: 'Getafe',
+    source: 'manual',
+    location: { type: 'Point', coordinates: [-3.7, 40.3] },
+    sports: [{ name: 'tenis', sportId: 'sport-1' }]
+  };
+  const fetchImpl = async (url, options = {}) => {
+    requested.push({ url, options });
+
+    if (options.method === 'POST' || options.method === 'PUT') {
+      return {
+        ok: true,
+        json: async () => ({ data: installation })
+      };
+    }
+
+    if (options.method === 'DELETE') {
+      return {
+        ok: true,
+        json: async () => ({ status: 200, message: 'Instalación eliminada correctamente' })
+      };
+    }
+
+    if (url.includes('/sports?name=tenis')) {
+      return {
+        ok: true,
+        json: async () => ({
+          data: [],
+          pagination: { page: 1, limit: 5 }
+        })
+      };
+    }
+
+    if (url.includes('/sports')) {
+      return {
+        ok: true,
+        json: async () => ({
+          data: [{ id: 'sport-1', name: 'tenis', category: 'racket', environment: 'outdoor' }],
+          pagination: { page: 1, limit: 5 }
+        })
+      };
+    }
+
+    if (/\/installations\/[^/?]+$/.test(url)) {
+      return {
+        ok: true,
+        json: async () => ({ data: installation })
+      };
+    }
+
+    return {
+      ok: true,
+      json: async () => ({ data: [installation], pagination: { page: 1, limit: 10 } })
+    };
+  };
+
+  await mountInstallationsPage(root, { fetchImpl, confirmImpl: () => true });
+
+  root.querySelector('select[name="catalogSportId"]').value = 'sport-1';
+  root.querySelector('#installation-sport-add-selected').click();
+  assert.match(root.querySelector('#installation-selected-sports').textContent, /tenis/);
+
+  root.querySelector('input[name="sportSearch"]').value = 'tenis';
+  root.querySelector('input[name="sportSearch"]').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+  );
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(requested.some(({ url }) => url.includes('osmKey=tenis')), true);
+
+  root.querySelector('[data-add-sport-id="sport-1"]').click();
+  assert.match(root.querySelector('#installation-selected-sports').textContent, /tenis/);
+
+  root.querySelector('#installation-form input[name="name"]').value = 'Polideportivo Norte';
+  root.querySelector('#installation-form input[name="type"]').value = 'sports_centre';
+  root.querySelector('#installation-form input[name="city"]').value = 'Getafe';
+  root.querySelector('#installation-form input[name="source"]').value = 'manual';
+  root.querySelector('#installation-form input[name="longitude"]').value = '-3.7';
+  root.querySelector('#installation-form input[name="latitude"]').value = '40.3';
+  root.querySelector('#installation-form').dispatchEvent(
+    new dom.window.Event('submit', { bubbles: true, cancelable: true })
+  );
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  const postRequest = requested.find(({ options }) => options.method === 'POST');
+  assert.ok(postRequest);
+  assert.deepEqual(JSON.parse(postRequest.options.body).sports, [{ name: 'tenis', sportId: 'sport-1' }]);
+
+  root.querySelector('[data-installation-edit-id="507f1f77bcf86cd799439011"]').click();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(root.querySelector('#installation-form input[name="name"]').value, 'Polideportivo Norte');
+  assert.equal(root.querySelector('#installation-form input[name="type"]').value, 'sports_centre');
+  assert.match(root.querySelector('#installation-form-status').textContent, /Editando instalación/);
+
+  root.querySelector('#installation-form input[name="city"]').value = 'Madrid';
+  root.querySelector('#installation-form').dispatchEvent(
+    new dom.window.Event('submit', { bubbles: true, cancelable: true })
+  );
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.equal(requested.some(({ options }) => options.method === 'PUT'), true);
+
+  root.querySelector('[data-installation-delete-id="507f1f77bcf86cd799439011"]').click();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.equal(requested.some(({ options }) => options.method === 'DELETE'), true);
 });

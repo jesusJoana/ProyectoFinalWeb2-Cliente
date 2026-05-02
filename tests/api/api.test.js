@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  createInstallation,
+  deleteInstallation,
   fetchApiStatus,
   fetchInstallationById,
   fetchInstallations,
   fetchInstallationWeather,
   fetchSportById,
   fetchSports,
-  fetchWeatherRecords
+  fetchWeatherRecords,
+  updateInstallation
 } from '../../public/js/api.js';
 
 test('fetchApiStatus devuelve el mensaje del backend cuando la API responde correctamente', async () => {
@@ -164,6 +167,90 @@ test('fetchInstallationWeather muestra errores devueltos por la API', async () =
     () => fetchInstallationWeather('inst-1', fetchImpl, 'http://localhost:3000'),
     /coordenadas válidas/
   );
+});
+
+test('createInstallation envía una instalación nueva a la API', async () => {
+  let requestOptions;
+  const fetchImpl = async (url, options) => {
+    requestOptions = { url, options };
+    return {
+      ok: true,
+      json: async () => ({
+        data: {
+          id: 'inst-1',
+          name: 'Polideportivo Norte',
+          type: 'sports_centre',
+          city: 'Getafe'
+        }
+      })
+    };
+  };
+
+  const result = await createInstallation(
+    {
+      name: 'Polideportivo Norte',
+      type: 'sports_centre',
+      city: 'Getafe',
+      sports: [{ name: 'tenis', sportId: 'sport-1' }]
+    },
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.id, 'inst-1');
+  assert.equal(requestOptions.url, 'http://localhost:3000/installations');
+  assert.equal(requestOptions.options.method, 'POST');
+  assert.deepEqual(JSON.parse(requestOptions.options.body).sports, [{ name: 'tenis', sportId: 'sport-1' }]);
+});
+
+test('updateInstallation actualiza una instalación existente', async () => {
+  let requestOptions;
+  const fetchImpl = async (url, options) => {
+    requestOptions = { url, options };
+    return {
+      ok: true,
+      json: async () => ({
+        data: {
+          id: '507f1f77bcf86cd799439011',
+          name: 'Polideportivo Sur',
+          type: 'sports_centre',
+          city: 'Getafe'
+        }
+      })
+    };
+  };
+
+  const result = await updateInstallation(
+    '507f1f77bcf86cd799439011',
+    { name: 'Polideportivo Sur', type: 'sports_centre', city: 'Getafe' },
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.name, 'Polideportivo Sur');
+  assert.equal(requestOptions.url, 'http://localhost:3000/installations/507f1f77bcf86cd799439011');
+  assert.equal(requestOptions.options.method, 'PUT');
+});
+
+test('deleteInstallation elimina una instalación existente', async () => {
+  let requestOptions;
+  const fetchImpl = async (url, options) => {
+    requestOptions = { url, options };
+    return {
+      ok: true,
+      json: async () => ({ status: 200, message: 'Instalación eliminada correctamente' })
+    };
+  };
+
+  const result = await deleteInstallation(
+    '507f1f77bcf86cd799439011',
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.status, 200);
+  assert.equal(requestOptions.url, 'http://localhost:3000/installations/507f1f77bcf86cd799439011');
+  assert.equal(requestOptions.options.method, 'DELETE');
 });
 
 test('fetchWeatherRecords construye la consulta con filtros, ordenación y paginación', async () => {

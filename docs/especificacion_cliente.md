@@ -26,6 +26,25 @@ El cliente debera permitir:
 - consultar el historico meteorologico persistido;
 - consultar y gestionar deportes del sistema.
 
+## 3.1. Situacion actual
+
+El cliente ya cubre los flujos principales previstos:
+
+- inicio y comprobacion de estado de la API;
+- consulta de instalaciones con filtros y paginacion;
+- detalle de instalacion;
+- meteorologia bajo demanda por instalacion;
+- historico meteorologico con filtros, ordenacion y paginacion;
+- catalogo global de deportes con listado, filtros, detalle, alta, edicion completa, edicion parcial y borrado;
+- gestion basica de instalaciones con alta, edicion, borrado y asociacion de deportes existentes del catalogo.
+
+Las siguientes ampliaciones se centran en:
+
+- mejorar la experiencia de usuario transversal;
+- revisar textos, estados vacios, estados de error y formularios;
+- incorporar busqueda avanzada `q` en instalaciones cuando la API quede cerrada;
+- preparar la documentacion y comprobacion final de entrega.
+
 ## 4. Alcance inicial
 
 El cliente cubre la API publica aprobada en el proyecto.
@@ -38,6 +57,7 @@ Incluye:
 - consumo de `GET /installations/{id}/weather`;
 - consumo de `GET /sports`;
 - consumo de `GET /weather-records`.
+- consumo de operaciones de gestion sobre instalaciones y deportes.
 
 No incluye en esta fase:
 
@@ -131,6 +151,11 @@ La seccion de instalaciones permitira:
   - tipo;
   - ciudad;
   - deportes asociados.
+- crear instalaciones nuevas;
+- editar instalaciones existentes;
+- borrar instalaciones;
+- asociar deportes existentes del catalogo;
+- quitar deportes asociados.
 
 ### 8.3. Detalle de instalacion
 
@@ -194,6 +219,8 @@ Como minimo, en cada deporte se mostrara:
 - categoria;
 - entorno.
 
+El formulario de esta seccion no debe usarse para indicar que una instalacion practica un deporte. Esa relacion se gestiona desde la seccion de instalaciones, seleccionando deportes ya existentes en el catalogo.
+
 ### 8.7. Deportes practicados en una instalacion
 
 La asociacion entre deportes e instalaciones pertenece a la gestion de instalaciones.
@@ -206,7 +233,7 @@ Desde el detalle o formulario de una instalacion, el cliente debera permitir:
 - quitar deportes asociados a la instalacion;
 - guardar la instalacion actualizada mediante `PUT /installations/{id}`.
 
-Esta funcionalidad se implementara dentro de la iteracion de gestion de instalaciones, no dentro del formulario del catalogo global de deportes.
+Esta funcionalidad ya pertenece al formulario de instalaciones. No se contempla anadir deportes libres por nombre desde instalaciones; la fuente debe ser el catalogo `sports`.
 
 ## 9. Operaciones del cliente sobre la API
 
@@ -286,8 +313,32 @@ Al cerrar esta fase, el cliente debera permitir demostrar de forma visible y nav
 
 En fases posteriores, el cliente podra ampliarse con:
 
-- busqueda avanzada `q` en instalaciones cuando se cierre la iteracion correspondiente;
+- busqueda avanzada `q` en instalaciones cuando la API cierre la iteracion correspondiente;
 - visualizacion cartografica;
 - mejoras de diseno y experiencia de usuario;
 - panel de revision de deportes incompletos;
 - exportaciones o vistas estadisticas.
+
+## 15. Siguientes iteraciones previstas
+
+### Iteracion 7. Mejora de experiencia de usuario y cierre
+
+- homogeneizar mensajes de carga, exito, error y estados vacios;
+- revisar formularios para que entren correctamente en pantalla;
+- revisar tablas, filtros y paginaciones;
+- limpiar duplicaciones pequenas en JavaScript;
+- comprobar navegacion principal y flujos manuales.
+
+### Iteracion 8. Busqueda avanzada de instalaciones
+
+- incorporar campo `q` cuando la API lo soporte;
+- permitir busqueda libre sobre nombre, tipo y ciudad;
+- mantener compatibilidad con filtros existentes;
+- anadir tests del servicio y de la vista.
+
+### Iteracion 9. Revision final de entrega
+
+- revisar README y documentos;
+- ejecutar suite de tests;
+- comprobar API y cliente levantados a la vez;
+- preparar propuesta de commits separados para API y cliente.

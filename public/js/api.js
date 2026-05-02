@@ -130,6 +130,62 @@ export async function fetchInstallationWeather(id, fetchImpl = globalThis.fetch,
   return payload.data;
 }
 
+async function writeInstallation(path, method, payload, fetchImpl, baseUrl) {
+  const response = await fetchImpl(joinUrl(baseUrl, path), {
+    method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo guardar la instalación.');
+    throw new Error(message);
+  }
+
+  const responsePayload = await response.json();
+
+  if (!responsePayload?.data || typeof responsePayload.data !== 'object') {
+    throw new Error('La API devolvió una instalación inesperada.');
+  }
+
+  return responsePayload.data;
+}
+
+export async function createInstallation(payload, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  return writeInstallation('/installations', 'POST', payload, fetchImpl, baseUrl);
+}
+
+export async function updateInstallation(id, payload, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar una instalación válida.');
+  }
+
+  return writeInstallation(`/installations/${encodeURIComponent(id)}`, 'PUT', payload, fetchImpl, baseUrl);
+}
+
+export async function deleteInstallation(id, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar una instalación válida.');
+  }
+
+  const response = await fetchImpl(joinUrl(baseUrl, `/installations/${encodeURIComponent(id)}`), {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo eliminar la instalación.');
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
 export async function fetchSports(options = {}, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
   const {
     name,
