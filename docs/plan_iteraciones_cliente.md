@@ -200,11 +200,15 @@ Pendiente de ampliar. Actualmente existe pagina y script base para cargar el lis
 
 ---
 
-## Iteracion 5. Consulta y gestion de deportes
+## Iteracion 5. Consulta y gestion del catalogo de deportes
 
 ### Objetivo
 
-Incorporar el recurso `sports` primero como consulta y despues como gestion basica.
+Incorporar el recurso `sports` como catalogo global de deportes.
+
+Esta iteracion permite completar la informacion normalizada de cada deporte, como `osmKey`, `category` y `environment`.
+
+No tiene como objetivo asociar deportes a instalaciones concretas. Esa relacion se gestionara en la Iteracion 6, dentro de la edicion de instalaciones.
 
 ### Alcance
 
@@ -221,7 +225,7 @@ Incorporar el recurso `sports` primero como consulta y despues como gestion basi
 
 ### Estado
 
-Pendiente de ampliar. Actualmente existe pagina y script base para cargar el listado inicial.
+Implementada funcionalmente. Queda pendiente revisar textos visibles para dejar claro que el formulario gestiona el catalogo global de deportes.
 
 ### Tests a implementar
 
@@ -236,17 +240,21 @@ Pendiente de ampliar. Actualmente existe pagina y script base para cargar el lis
 
 ---
 
-## Iteracion 6. Gestion basica de instalaciones
+## Iteracion 6. Gestion basica de instalaciones y deportes practicados
 
 ### Objetivo
 
-Completar la parte de instalaciones anadiendo operaciones de creacion, edicion y borrado.
+Completar la parte de instalaciones anadiendo operaciones de creacion, edicion y borrado, incluyendo la gestion de los deportes practicados en cada instalacion.
 
 ### Alcance
 
 - crear formulario de alta de instalacion con `POST /installations`;
 - crear formulario de edicion con `PUT /installations/{id}`;
 - anadir borrado con `DELETE /installations/{id}`;
+- mostrar los deportes asociados a una instalacion;
+- buscar deportes existentes en el catalogo `sports`;
+- asociar deportes del catalogo a la instalacion;
+- quitar deportes asociados a la instalacion;
 - validar campos basicos en cliente;
 - refrescar listados tras operaciones exitosas;
 - mostrar errores devueltos por la API.
@@ -260,6 +268,8 @@ Pendiente.
 - tests del formulario de alta;
 - tests del formulario de edicion;
 - test de borrado;
+- tests de asociacion de deportes a una instalacion;
+- tests de eliminacion de deportes asociados a una instalacion;
 - tests de validaciones basicas en cliente;
 - tests de refresco de listado tras crear, editar o eliminar;
 - tests de error cuando la API rechaza la operacion.
@@ -303,7 +313,7 @@ Pendiente.
 4. Iteracion 3: meteorologia por instalacion
 5. Iteracion 4: historico meteorologico
 6. Iteracion 5: consulta y gestion de deportes
-7. Iteracion 6: gestion basica de instalaciones
+7. Iteracion 6: gestion basica de instalaciones y deportes practicados
 8. Iteracion 7: mejora de experiencia de usuario y cierre
 
 ## Criterio de cierre por iteracion

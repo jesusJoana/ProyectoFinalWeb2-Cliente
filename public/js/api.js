@@ -131,8 +131,24 @@ export async function fetchInstallationWeather(id, fetchImpl = globalThis.fetch,
 }
 
 export async function fetchSports(options = {}, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
-  const { missingMetadata, page = 1, limit = 10 } = options;
-  const queryString = buildQueryString({ missingMetadata, page, limit });
+  const {
+    name,
+    osmKey,
+    category,
+    environment,
+    missingMetadata,
+    page = 1,
+    limit = 10
+  } = options;
+  const queryString = buildQueryString({
+    name,
+    osmKey,
+    category,
+    environment,
+    missingMetadata,
+    page,
+    limit
+  });
   const response = await fetchImpl(joinUrl(baseUrl, `/sports${queryString}`), {
     headers: {
       Accept: 'application/json'
@@ -154,6 +170,95 @@ export async function fetchSports(options = {}, fetchImpl = globalThis.fetch, ba
     data: payload.data,
     pagination: payload.pagination ?? { page, limit }
   };
+}
+
+export async function fetchSportById(id, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar un deporte válido.');
+  }
+
+  const response = await fetchImpl(joinUrl(baseUrl, `/sports/${encodeURIComponent(id)}`), {
+    headers: {
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo cargar el detalle del deporte.');
+    throw new Error(message);
+  }
+
+  const payload = await response.json();
+
+  if (!payload?.data || typeof payload.data !== 'object') {
+    throw new Error('La API devolvió un detalle de deporte inesperado.');
+  }
+
+  return payload.data;
+}
+
+async function writeSport(path, method, payload, fetchImpl, baseUrl) {
+  const response = await fetchImpl(joinUrl(baseUrl, path), {
+    method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo guardar el deporte.');
+    throw new Error(message);
+  }
+
+  const responsePayload = await response.json();
+
+  if (!responsePayload?.data || typeof responsePayload.data !== 'object') {
+    throw new Error('La API devolvió un deporte inesperado.');
+  }
+
+  return responsePayload.data;
+}
+
+export async function createSport(payload, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  return writeSport('/sports', 'POST', payload, fetchImpl, baseUrl);
+}
+
+export async function updateSport(id, payload, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar un deporte válido.');
+  }
+
+  return writeSport(`/sports/${encodeURIComponent(id)}`, 'PUT', payload, fetchImpl, baseUrl);
+}
+
+export async function patchSport(id, payload, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar un deporte válido.');
+  }
+
+  return writeSport(`/sports/${encodeURIComponent(id)}`, 'PATCH', payload, fetchImpl, baseUrl);
+}
+
+export async function deleteSport(id, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Debes seleccionar un deporte válido.');
+  }
+
+  const response = await fetchImpl(joinUrl(baseUrl, `/sports/${encodeURIComponent(id)}`), {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response, 'No se pudo eliminar el deporte.');
+    throw new Error(message);
+  }
+
+  return response.json();
 }
 
 export async function fetchWeatherRecords(options = {}, fetchImpl = globalThis.fetch, baseUrl = API_BASE_URL) {

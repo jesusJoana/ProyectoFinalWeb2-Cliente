@@ -188,10 +188,24 @@ button:disabled {
 }
 
 .form-actions,
-.pagination {
+.pagination,
+.item-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.form-actions {
+  min-width: 0;
+}
+
+.form-actions button {
+  flex: 1 1 110px;
+}
+
+.item-actions {
+  justify-content: flex-end;
 }
 
 .results-list {
@@ -328,6 +342,7 @@ dd {
 
   .section-header,
   .result-item,
+  .item-actions,
   .pagination {
     align-items: stretch;
     flex-direction: column;

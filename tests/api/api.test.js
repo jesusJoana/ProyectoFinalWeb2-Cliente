@@ -5,6 +5,8 @@ import {
   fetchInstallationById,
   fetchInstallations,
   fetchInstallationWeather,
+  fetchSportById,
+  fetchSports,
   fetchWeatherRecords
 } from '../../public/js/api.js';
 
@@ -225,4 +227,75 @@ test('fetchWeatherRecords muestra errores devueltos por la API', async () => {
     () => fetchWeatherRecords({ dateFrom: 'ayer' }, fetchImpl, 'http://localhost:3000'),
     /dateFrom debe ser una fecha válida\./
   );
+});
+
+test('fetchSports construye la consulta con filtros y paginación', async () => {
+  let requestedUrl;
+  const fetchImpl = async (url) => {
+    requestedUrl = url;
+    return {
+      ok: true,
+      json: async () => ({
+        data: [
+          {
+            id: 'sport-1',
+            name: 'tenis',
+            osmKey: 'tennis',
+            category: 'racket',
+            environment: 'outdoor'
+          }
+        ],
+        pagination: { page: 2, limit: 5 }
+      })
+    };
+  };
+
+  const result = await fetchSports(
+    {
+      name: 'ten',
+      osmKey: 'tennis',
+      category: 'racket',
+      environment: 'outdoor',
+      missingMetadata: 'true',
+      page: 2,
+      limit: 5
+    },
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.data.length, 1);
+  assert.match(requestedUrl, /^http:\/\/localhost:3000\/sports\?/);
+  assert.match(requestedUrl, /name=ten/);
+  assert.match(requestedUrl, /osmKey=tennis/);
+  assert.match(requestedUrl, /category=racket/);
+  assert.match(requestedUrl, /environment=outdoor/);
+  assert.match(requestedUrl, /missingMetadata=true/);
+  assert.match(requestedUrl, /page=2/);
+  assert.match(requestedUrl, /limit=5/);
+});
+
+test('fetchSportById devuelve el detalle de un deporte', async () => {
+  let requestedUrl;
+  const fetchImpl = async (url) => {
+    requestedUrl = url;
+    return {
+      ok: true,
+      json: async () => ({
+        data: {
+          id: '507f1f77bcf86cd799439011',
+          name: 'tenis'
+        }
+      })
+    };
+  };
+
+  const result = await fetchSportById(
+    '507f1f77bcf86cd799439011',
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.name, 'tenis');
+  assert.equal(requestedUrl, 'http://localhost:3000/sports/507f1f77bcf86cd799439011');
 });

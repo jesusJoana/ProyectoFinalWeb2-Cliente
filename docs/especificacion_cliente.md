@@ -171,9 +171,13 @@ La seccion de `weather-records` permitira:
 - ordenar con `sortBy` y `sortOrder`;
 - abrir el detalle de un registro por su id si se desea.
 
-### 8.6. Gestion de deportes
+### 8.6. Gestion del catalogo de deportes
 
-La seccion de `sports` permitira:
+La seccion de `sports` permitira gestionar el catalogo global de deportes del sistema.
+
+Este catalogo sirve para completar y normalizar la informacion general de cada deporte, pero no modifica por si solo los deportes practicados en una instalacion concreta.
+
+La seccion permitira:
 
 - listar deportes;
 - filtrar deportes incompletos con `missingMetadata=true`;
@@ -189,6 +193,20 @@ Como minimo, en cada deporte se mostrara:
 - `osmKey`;
 - categoria;
 - entorno.
+
+### 8.7. Deportes practicados en una instalacion
+
+La asociacion entre deportes e instalaciones pertenece a la gestion de instalaciones.
+
+Desde el detalle o formulario de una instalacion, el cliente debera permitir:
+
+- ver los deportes practicados en esa instalacion;
+- buscar deportes existentes en el catalogo `sports`;
+- asociar uno o varios deportes del catalogo a la instalacion;
+- quitar deportes asociados a la instalacion;
+- guardar la instalacion actualizada mediante `PUT /installations/{id}`.
+
+Esta funcionalidad se implementara dentro de la iteracion de gestion de instalaciones, no dentro del formulario del catalogo global de deportes.
 
 ## 9. Operaciones del cliente sobre la API
 

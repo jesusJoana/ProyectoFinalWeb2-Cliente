@@ -24,8 +24,80 @@
       <main class="content-stack">
         <section class="panel panel-wide">
           <h2>Listado de deportes</h2>
+          <form class="filters-form" id="sports-filters">
+            <label>
+              Nombre
+              <input type="search" name="name" placeholder="tenis" />
+            </label>
+            <label>
+              Clave OSM
+              <input type="search" name="osmKey" placeholder="tennis" />
+            </label>
+            <label>
+              Categoría
+              <input type="search" name="category" placeholder="racket" />
+            </label>
+            <label>
+              Entorno
+              <input type="search" name="environment" placeholder="outdoor" />
+            </label>
+            <label>
+              Metadatos
+              <select name="missingMetadata">
+                <option value="">Todos</option>
+                <option value="true">Incompletos</option>
+              </select>
+            </label>
+            <label>
+              Resultados
+              <select name="limit">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit">Buscar</button>
+              <button type="button" class="secondary-button" id="sports-clear">Limpiar</button>
+            </div>
+          </form>
           <p class="status-text" id="sports-status">Cargando deportes...</p>
+          <div id="sport-detail"></div>
           <div id="sports-results"></div>
+          <div class="pagination" aria-label="Paginación de deportes">
+            <button type="button" id="sports-prev">Anterior</button>
+            <span id="sports-page-indicator">Página 1</span>
+            <button type="button" id="sports-next">Siguiente</button>
+          </div>
+        </section>
+
+        <section class="panel panel-wide">
+          <h2>Formulario de catálogo de deportes</h2>
+          <form class="filters-form" id="sport-form">
+            <input type="hidden" name="id" />
+            <label>
+              Nombre
+              <input type="text" name="name" placeholder="tenis" />
+            </label>
+            <label>
+              Clave OSM
+              <input type="text" name="osmKey" placeholder="tennis" />
+            </label>
+            <label>
+              Categoría
+              <input type="text" name="category" placeholder="racket" />
+            </label>
+            <label>
+              Entorno
+              <input type="text" name="environment" placeholder="outdoor" />
+            </label>
+            <div class="form-actions">
+              <button type="submit" data-sport-save-mode="put">Guardar</button>
+              <button type="submit" class="secondary-button" data-sport-save-mode="patch">Guardar parcial</button>
+              <button type="button" class="secondary-button" id="sport-form-reset">Limpiar</button>
+            </div>
+          </form>
+          <p class="status-text" id="sport-form-status">Formulario listo para crear o editar un deporte del catálogo.</p>
         </section>
       </main>
     </div>
