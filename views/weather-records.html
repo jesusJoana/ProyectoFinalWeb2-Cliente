@@ -24,8 +24,59 @@
       <main class="content-stack">
         <section class="panel panel-wide">
           <h2>Últimos registros</h2>
+          <form class="filters-form" id="weather-records-filters">
+            <label>
+              Instalación
+              <input type="search" name="installationId" placeholder="ObjectId de instalación" />
+            </label>
+            <label>
+              Condición
+              <input type="search" name="condition" placeholder="clear" />
+            </label>
+            <label>
+              Desde
+              <input type="datetime-local" name="dateFrom" />
+            </label>
+            <label>
+              Hasta
+              <input type="datetime-local" name="dateTo" />
+            </label>
+            <label>
+              Ordenar por
+              <select name="sortBy">
+                <option value="queryDate" selected>Fecha</option>
+                <option value="temperature">Temperatura</option>
+                <option value="humidity">Humedad</option>
+                <option value="windspeed">Viento</option>
+              </select>
+            </label>
+            <label>
+              Dirección
+              <select name="sortOrder">
+                <option value="desc" selected>Descendente</option>
+                <option value="asc">Ascendente</option>
+              </select>
+            </label>
+            <label>
+              Resultados
+              <select name="limit">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit">Buscar</button>
+              <button type="button" class="secondary-button" id="weather-records-clear">Limpiar</button>
+            </div>
+          </form>
           <p class="status-text" id="weather-records-status">Cargando histórico meteorológico...</p>
           <div id="weather-records-results"></div>
+          <div class="pagination" aria-label="Paginación de registros meteorológicos">
+            <button type="button" id="weather-records-prev">Anterior</button>
+            <span id="weather-records-page-indicator">Página 1</span>
+            <button type="button" id="weather-records-next">Siguiente</button>
+          </div>
         </section>
       </main>
     </div>

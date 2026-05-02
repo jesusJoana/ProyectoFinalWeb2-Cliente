@@ -4,7 +4,8 @@ import {
   fetchApiStatus,
   fetchInstallationById,
   fetchInstallations,
-  fetchInstallationWeather
+  fetchInstallationWeather,
+  fetchWeatherRecords
 } from '../../public/js/api.js';
 
 test('fetchApiStatus devuelve el mensaje del backend cuando la API responde correctamente', async () => {
@@ -160,5 +161,68 @@ test('fetchInstallationWeather muestra errores devueltos por la API', async () =
   await assert.rejects(
     () => fetchInstallationWeather('inst-1', fetchImpl, 'http://localhost:3000'),
     /coordenadas válidas/
+  );
+});
+
+test('fetchWeatherRecords construye la consulta con filtros, ordenación y paginación', async () => {
+  let requestedUrl;
+  const fetchImpl = async (url) => {
+    requestedUrl = url;
+    return {
+      ok: true,
+      json: async () => ({
+        data: [
+          {
+            id: 'weather-1',
+            installationId: '507f1f77bcf86cd799439011',
+            temperature: 18.6,
+            condition: 'clear',
+            humidity: 55,
+            windspeed: 3.1,
+            queryDate: '2026-04-25T12:30:00.000Z'
+          }
+        ],
+        pagination: { page: 2, limit: 5 },
+        sorting: { queryDate: -1 }
+      })
+    };
+  };
+
+  const result = await fetchWeatherRecords(
+    {
+      installationId: '507f1f77bcf86cd799439011',
+      condition: 'clear',
+      dateFrom: '2026-04-20T00:00',
+      dateTo: '2026-04-21T00:00',
+      sortBy: 'queryDate',
+      sortOrder: 'desc',
+      page: 2,
+      limit: 5
+    },
+    fetchImpl,
+    'http://localhost:3000'
+  );
+
+  assert.equal(result.data.length, 1);
+  assert.match(requestedUrl, /^http:\/\/localhost:3000\/weather-records\?/);
+  assert.match(requestedUrl, /installationId=507f1f77bcf86cd799439011/);
+  assert.match(requestedUrl, /condition=clear/);
+  assert.match(requestedUrl, /dateFrom=2026-04-20T00%3A00/);
+  assert.match(requestedUrl, /dateTo=2026-04-21T00%3A00/);
+  assert.match(requestedUrl, /sortBy=queryDate/);
+  assert.match(requestedUrl, /sortOrder=desc/);
+  assert.match(requestedUrl, /page=2/);
+  assert.match(requestedUrl, /limit=5/);
+});
+
+test('fetchWeatherRecords muestra errores devueltos por la API', async () => {
+  const fetchImpl = async () => ({
+    ok: false,
+    json: async () => ({ message: 'dateFrom debe ser una fecha válida.' })
+  });
+
+  await assert.rejects(
+    () => fetchWeatherRecords({ dateFrom: 'ayer' }, fetchImpl, 'http://localhost:3000'),
+    /dateFrom debe ser una fecha válida\./
   );
 });
