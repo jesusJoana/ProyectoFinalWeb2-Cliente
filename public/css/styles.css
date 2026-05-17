@@ -269,6 +269,17 @@ dd {
   overflow-wrap: anywhere;
 }
 
+.reference-block {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.reference-block .muted {
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

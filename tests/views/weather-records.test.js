@@ -39,6 +39,9 @@ function createWeatherRecordsDom() {
 }
 
 test('renderWeatherRecords muestra registros meteorológicos', () => {
+  const installationNamesById = new Map([
+    ['inst-1', 'Polideportivo Norte']
+  ]);
   const html = renderWeatherRecords([
     {
       installationId: 'inst-1',
@@ -48,9 +51,10 @@ test('renderWeatherRecords muestra registros meteorológicos', () => {
       windspeed: 4.2,
       queryDate: '2026-04-25T14:00:00.000Z'
     }
-  ]);
+  ], installationNamesById);
 
   assert.match(html, /inst-1/);
+  assert.match(html, /Polideportivo Norte/);
   assert.match(html, /18,6 °C/);
   assert.match(html, /clear/);
   assert.match(html, /73 %/);
@@ -69,6 +73,20 @@ test('La página de histórico permite filtrar, ordenar y paginar registros', as
   const requestedUrls = [];
   const fetchImpl = async (url) => {
     requestedUrls.push(url);
+
+    if (url.includes('/installations/inst-')) {
+      const id = url.split('/').at(-1);
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            id,
+            name: id === 'inst-1' ? 'Polideportivo Norte' : `Instalación ${id}`
+          }
+        })
+      };
+    }
+
     const records = Array.from({ length: url.includes('limit=5') ? 5 : 2 }, (_, index) => ({
       id: `weather-${index + 1}`,
       installationId: `inst-${index + 1}`,
@@ -116,7 +134,9 @@ test('La página de histórico permite filtrar, ordenar y paginar registros', as
     true
   );
   assert.match(root.querySelector('#weather-records-results').textContent, /clear/);
+  assert.match(root.querySelector('#weather-records-results').textContent, /Polideportivo Norte/);
   assert.match(root.querySelector('#weather-records-status').textContent, /registros cargados/);
+  assert.equal(requestedUrls.some((url) => url.endsWith('/installations/inst-1')), true);
 
   root.querySelector('#weather-records-next').click();
   await new Promise((resolve) => setTimeout(resolve, 0));

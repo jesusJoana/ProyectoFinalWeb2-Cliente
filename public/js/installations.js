@@ -207,7 +207,7 @@ export function renderInstallationsSection() {
     </section>
 
     <section class="panel panel-wide">
-      <h2>Formulario de instalación</h2>
+      <h2>Crear/Actualizar instalación</h2>
       <form class="filters-form" id="installation-form">
         <input type="hidden" name="id" />
         <label>

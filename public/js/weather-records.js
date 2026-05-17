@@ -1,4 +1,4 @@
-import { fetchWeatherRecords } from './api.js';
+import { fetchInstallationById, fetchWeatherRecords } from './api.js';
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_SORT_BY = 'queryDate';
@@ -65,7 +65,33 @@ function formatDate(value) {
   }).format(date);
 }
 
-export function renderWeatherRecords(records) {
+function getInstallationLabel(record, installationNamesById) {
+  const installationId = String(record.installationId ?? '').trim();
+
+  if (!installationId) {
+    return 'Sin informar';
+  }
+
+  return installationNamesById.get(installationId) ?? installationId;
+}
+
+function renderInstallationReference(record, installationNamesById) {
+  const installationId = String(record.installationId ?? '').trim();
+  const installationLabel = getInstallationLabel(record, installationNamesById);
+
+  if (!installationId || installationLabel === installationId) {
+    return escapeHtml(installationLabel);
+  }
+
+  return `
+    <span class="reference-block">
+      <strong>${escapeHtml(installationLabel)}</strong>
+      <span class="muted">ID: ${escapeHtml(installationId)}</span>
+    </span>
+  `;
+}
+
+export function renderWeatherRecords(records, installationNamesById = new Map()) {
   if (!records.length) {
     return '<p class="empty-state">No hay registros meteorológicos disponibles.</p>';
   }
@@ -79,7 +105,7 @@ export function renderWeatherRecords(records) {
             <dl class="compact-data">
               <div>
                 <dt>Instalación</dt>
-                <dd>${escapeHtml(record.installationId ?? 'Sin informar')}</dd>
+                <dd>${renderInstallationReference(record, installationNamesById)}</dd>
               </div>
               <div>
                 <dt>Temperatura</dt>
@@ -103,6 +129,28 @@ export function renderWeatherRecords(records) {
       `).join('')}
     </div>
   `;
+}
+
+async function resolveInstallationNames(records, fetchImpl) {
+  const uniqueInstallationIds = [...new Set(
+    records
+      .map((record) => String(record.installationId ?? '').trim())
+      .filter(Boolean)
+  )];
+  const installationNamesById = new Map();
+
+  await Promise.all(uniqueInstallationIds.map(async (installationId) => {
+    try {
+      const installation = await fetchInstallationById(installationId, fetchImpl);
+      if (installation?.name) {
+        installationNamesById.set(installationId, installation.name);
+      }
+    } catch {
+      // Si una instalación no puede resolverse, mantenemos visible el installationId.
+    }
+  }));
+
+  return installationNamesById;
 }
 
 export async function mountWeatherRecordsPage(rootElement, dependencies = {}) {
@@ -135,8 +183,9 @@ export async function mountWeatherRecordsPage(rootElement, dependencies = {}) {
         { ...state.filters, page: state.page, limit: state.limit },
         fetchImpl
       );
+      const installationNamesById = await resolveInstallationNames(payload.data, fetchImpl);
       state.hasNextPage = payload.data.length === state.limit;
-      resultsNode.innerHTML = renderWeatherRecords(payload.data);
+      resultsNode.innerHTML = renderWeatherRecords(payload.data, installationNamesById);
       pageNode.textContent = `Página ${state.page}`;
       prevButton.disabled = state.page <= 1;
       nextButton.disabled = !state.hasNextPage;
