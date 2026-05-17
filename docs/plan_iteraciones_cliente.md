@@ -316,40 +316,7 @@ Completada.
 
 ---
 
-## Iteracion 8. Busqueda avanzada de instalaciones
-
-### Objetivo
-
-Incorporar en el cliente el parametro `q` de busqueda libre cuando la API lo tenga cerrado.
-
-### Alcance
-
-- anadir campo `q` en filtros de instalaciones;
-- consumir `GET /installations?q=...`;
-- combinar `q` con filtros actuales:
-  - `name`
-  - `city`
-  - `type`
-  - `sport`
-  - `page`
-  - `limit`
-- mostrar mensajes de error si la API rechaza una busqueda vacia o invalida;
-- mantener compatibilidad con el comportamiento actual.
-
-### Estado
-
-Pendiente, dependiente de cierre en API.
-
-### Tests a implementar
-
-- test del servicio con parametro `q`;
-- test de la vista enviando `q`;
-- test de combinacion `q + city`;
-- test de error cuando la API rechaza la busqueda.
-
----
-
-## Iteracion 9. Revision final de entrega
+## Iteracion 8. Revision final de entrega
 
 ### Objetivo
 
@@ -380,8 +347,7 @@ Pendiente.
 6. Iteracion 5: consulta y gestion de deportes
 7. Iteracion 6: gestion basica de instalaciones y deportes practicados
 8. Iteracion 7: mejora de experiencia de usuario y cierre
-9. Iteracion 8: busqueda avanzada de instalaciones
-10. Iteracion 9: revision final de entrega
+9. Iteracion 8: revision final de entrega
 
 ## Criterio de cierre por iteracion
 

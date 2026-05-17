@@ -42,7 +42,6 @@ Las siguientes ampliaciones se centran en:
 
 - mejorar la experiencia de usuario transversal;
 - revisar textos, estados vacios, estados de error y formularios;
-- incorporar busqueda avanzada `q` en instalaciones cuando la API quede cerrada;
 - preparar la documentacion y comprobacion final de entrega.
 
 ## 4. Alcance inicial
@@ -313,9 +312,7 @@ Al cerrar esta fase, el cliente debera permitir demostrar de forma visible y nav
 
 En fases posteriores, el cliente podra ampliarse con:
 
-- busqueda avanzada `q` en instalaciones cuando la API cierre la iteracion correspondiente;
 - visualizacion cartografica;
-- mejoras de diseno y experiencia de usuario;
 - panel de revision de deportes incompletos;
 - exportaciones o vistas estadisticas.
 
@@ -329,14 +326,7 @@ En fases posteriores, el cliente podra ampliarse con:
 - limpiar duplicaciones pequenas en JavaScript;
 - comprobar navegacion principal y flujos manuales.
 
-### Iteracion 8. Busqueda avanzada de instalaciones
-
-- incorporar campo `q` cuando la API lo soporte;
-- permitir busqueda libre sobre nombre, tipo y ciudad;
-- mantener compatibilidad con filtros existentes;
-- anadir tests del servicio y de la vista.
-
-### Iteracion 9. Revision final de entrega
+### Iteracion 8. Revision final de entrega
 
 - revisar README y documentos;
 - ejecutar suite de tests;
