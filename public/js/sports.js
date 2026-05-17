@@ -213,6 +213,7 @@ export async function mountSportsPage(rootElement, dependencies = {}) {
     try {
       const sport = await fetchSportById(id, fetchImpl);
       detailNode.innerHTML = renderSportDetail(sport);
+      detailNode.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
       setStatus(statusNode, 'Detalle cargado correctamente.', 'is-success');
     } catch (error) {
       setStatus(statusNode, error.message, 'is-error');
@@ -225,6 +226,8 @@ export async function mountSportsPage(rootElement, dependencies = {}) {
     try {
       const sport = await fetchSportById(id, fetchImpl);
       fillSportForm(sportForm, sport);
+      sportForm.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+      sportForm.elements.name.focus();
       setStatus(formStatusNode, 'Editando deporte seleccionado.', 'is-success');
     } catch (error) {
       setStatus(formStatusNode, error.message, 'is-error');

@@ -81,6 +81,13 @@ a {
   text-decoration: none;
 }
 
+.main-nav a[aria-current="page"] {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
 .content-stack {
   display: flex;
   flex-direction: column;
@@ -124,7 +131,7 @@ a {
 .filters-form {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   align-items: end;
   padding: 16px;
   border: 1px solid var(--border);
@@ -164,6 +171,7 @@ button {
   color: #ffffff;
   background: var(--accent);
   cursor: pointer;
+  overflow-wrap: anywhere;
 }
 
 button:hover {
@@ -197,11 +205,9 @@ button:disabled {
 }
 
 .form-actions {
-  min-width: 0;
-}
-
-.form-actions button {
-  flex: 1 1 110px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  min-width: min(100%, 260px);
 }
 
 .item-actions {
@@ -223,8 +229,13 @@ button:disabled {
   background: var(--surface);
 }
 
+.result-item > div:first-child {
+  min-width: 0;
+}
+
 .result-item h3 {
   margin: 0 0 10px;
+  overflow-wrap: anywhere;
 }
 
 .compact-data,
@@ -268,11 +279,26 @@ dd {
 .tag {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 28px;
   padding: 4px 8px;
   border-radius: 8px;
   color: var(--accent-dark);
   background: var(--accent-soft);
+}
+
+.tag-action {
+  min-height: 26px;
+  padding: 2px 8px;
+  border-color: var(--accent-dark);
+  color: var(--accent-dark);
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
+.tag-action:hover {
+  color: #ffffff;
+  background: var(--accent-dark);
 }
 
 .detail-panel {
@@ -320,6 +346,7 @@ dd {
 .status-text {
   color: var(--muted);
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .status-text.is-success {
@@ -346,5 +373,13 @@ dd {
   .pagination {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .filters-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
   }
 }

@@ -297,13 +297,21 @@ Revisar el cliente de forma transversal para dejarlo consistente, usable y prepa
 
 ### Estado
 
-Pendiente.
+Completada.
 
-### Tests a implementar
+### Resultado actual
+
+- navegacion principal revisada con enlace activo por seccion;
+- formularios y botones ajustados para reducir desbordes en escritorio y movil;
+- acciones de deportes asociados mas compactas y legibles;
+- selector de ordenacion del historico alineado con campos admitidos por la API;
+- edicion y detalle de deportes desplazan el foco visual hacia la zona relevante;
+- test de regresion para navegacion principal en todas las vistas.
+
+### Tests implementados
 
 - revision y ajuste de la suite existente;
-- tests de regresion de navegacion principal;
-- tests de componentes compartidos criticos;
+- test de regresion de navegacion principal;
 - tests de flujos completos mas importantes del cliente.
 
 ---
